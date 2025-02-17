@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order</title>
+    <link rel="stylesheet" href="/static/styles.css">  <!-- Link to external CSS if you have one -->
+</head>
+<body>
+    <h1>Track Your Order</h1>
+    <p>Enter your order ID to check the status of your order.</p>
+    <form action="/support/chat" method="post">
+        <label for="order_id">Order ID:</label>
+        <input type="text" id="order_id" name="order_id" required>
+        <button type="submit">Track Order</button>
+    </form>
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>

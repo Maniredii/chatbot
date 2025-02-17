@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request a Refund</title>
+    <link rel="stylesheet" href="/static/styles.css">  <!-- Link to external CSS if you have one -->
+</head>
+<body>
+    <h1>Request a Refund</h1>
+    <p>If you are requesting a refund, please provide the following details:</p>
+    <form action="/support/chat" method="post">
+        <label for="order_id">Order ID:</label>
+        <input type="text" id="order_id" name="order_id" required><br><br>
+
+        <label for="message">Reason for Refund:</label><br>
+        <textarea id="message" name="message" rows="4" required></textarea><br><br>
+
+        <button type="submit">Request Refund</button>
+    </form>
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
+

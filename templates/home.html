@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Support Chat Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #00b4db, #0083B0, #2c3e50);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-heading {
+            color: white;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease-in;
+        }
+
+        .sub-heading {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #chat-icon-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #chat-icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(145deg, #00b4db, #0083B0);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        #chat-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        #chat-icon i {
+            color: white;
+            font-size: 28px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #chat-container {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 380px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            z-index: 999;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #chat-header {
+            background: linear-gradient(145deg, #00b4db, #0083B0);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #clear-chat {
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #clear-chat:hover {
+            transform: scale(1.1);
+            color: #f0f2f5;
+        }
+
+        #close-chat {
+            cursor: pointer;
+            font-size: 24px;
+            transition: transform 0.3s ease;
+            margin-left: 10px;
+        }
+
+        #close-chat:hover {
+            transform: rotate(90deg);
+        }
+
+        #chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .bot-message {
+            background: linear-gradient(145deg, #f0f2f5, #e6e9ec);
+            margin-right: auto;
+            color: #2c3e50;
+        }
+
+        .user-message {
+            background: linear-gradient(145deg, #00b4db, #0083B0);
+            color: white;
+            margin-left: auto;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #f0f2f5, #e6e9ec);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .option-button:hover {
+            background: linear-gradient(145deg, #e6e9ec, #f0f2f5);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        #input-container {
+            padding: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-icon {
+            cursor: pointer;
+            color: #0083B0;
+            font-size: 1.5em;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-icon:hover {
+            color: #00b4db;
+            transform: scale(1.1);
+        }
+
+        .image-message {
+            max-width: 200px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e6e9ec;
+            border-radius: 25px;
+            margin-right: 10px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #message-input:focus {
+            border-color: #00b4db;
+        }
+
+        #send-button {
+            padding: 12px 25px;
+            background: linear-gradient(145deg, #00b4db, #0083B0);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        #send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .loading {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .loading:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Heading -->
+    <h1 class="main-heading">Support Chat Bot</h1>
+    <p class="sub-heading">How can we help you today?</p>
+
+    <!-- Chat Icon -->
+    <div id="chat-icon-container">
+        <div id="chat-icon" onclick="toggleChat()">
+            <i class="fas fa-comments"></i>
+        </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div id="chat-container">
+        <div id="chat-header">
+            Customer Support
+            <div class="header-buttons">
+                <span id="clear-chat" onclick="clearChat()" title="Clear Chat">
+                    <i class="fas fa-trash-alt"></i>
+                </span>
+                <span id="close-chat" onclick="toggleChat()">×</span>
+            </div>
+        </div>
+        <div id="chat-messages">
+            <div class="message bot-message">
+                Hello! How can I help you today? Please choose from these options:
+            </div>
+            <div class="message bot-message">
+                <button class="option-button" onclick="selectOption('technical')">1. Technical Support</button>
+                <button class="option-button" onclick="selectOption('order')">2. Order Tracking</button>
+                <button class="option-button" onclick="selectOption('refund')">3. Refunds & Returns</button>
+                <button class="option-button" onclick="selectOption('billing')">4. Billing Enquiries</button>
+            </div>
+        </div>
+        <div id="input-container">
+            <label for="image-upload" class="upload-icon">
+                <i class="fas fa-image"></i>
+            </label>
+            <input type="file" id="image-upload" accept="image/*" style="display: none;">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let currentOption = null;
+
+        function toggleChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.style.display = chatContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function selectOption(option) {
+            currentOption = option;
+            let message = '';
+            switch(option) {
+                case 'technical':
+                    message = 'You selected Technical Support. What issue are you facing?';
+                    break;
+                case 'order':
+                    message = 'You selected Order Tracking. Please provide your order number.';
+                    break;
+                case 'refund':
+                    message = 'You selected Refunds & Returns. How can I help with your return?';
+                    break;
+                case 'billing':
+                    message = 'You selected Billing Enquiries. What billing issue can I help with?';
+                    break;
+            }
+            addMessage(message, 'bot');
+        }
+
+        function addMessage(text, sender, isLoading = false, imageUrl = null) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            if (isLoading) {
+                messageDiv.innerHTML = `Thinking<span class="loading"></span>`;
+            } else if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'image-message';
+                messageDiv.appendChild(img);
+            } else {
+                messageDiv.textContent = text;
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return messageDiv;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                const loadingMessage = addMessage('', 'bot', true);
+                
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            option: currentOption
+                        }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    
+                    const data = await response.json();
+                    loadingMessage.remove();
+                    addMessage(data.response, 'bot');
+                } catch (error) {
+                    console.error('Error:', error);
+                    loadingMessage.remove();
+                    addMessage("I'm sorry, I encountered an error. Please try again.", 'bot');
+                }
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        document.getElementById('image-upload').addEventListener('change', handleImageUpload);
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    addMessage('', 'user', false, e.target.result);
+                    sendImageMessage(e.target.result);
+                };
+                reader.readAsDataURL(file);
+                event.target.value = '';
+            }
+        }
+
+        async function sendImageMessage(imageUrl) {
+            const loadingMessage = addMessage('', 'bot', true);
+            
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Image uploaded',
+                        option: currentOption,
+                        image: imageUrl
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                loadingMessage.remove();
+                addMessage(data.response, 'bot');
+            } catch (error) {
+                console.error('Error:', error);
+                loadingMessage.remove();
+                addMessage("I'm sorry, I encountered an error processing the image. Please try again.", 'bot');
+            }
+        }
+
+        function clearChat() {
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.innerHTML = `
+                <div class="message bot-message">
+                    Hello! How can I help you today? Please choose from these options:
+                </div>
+                <div class="message bot-message">
+                    <button class="option-button" onclick="selectOption('technical')">1. Technical Support</button>
+                    <button class="option-button" onclick="selectOption('order')">2. Order Tracking</button>
+                    <button class="option-button" onclick="selectOption('refund')">3. Refunds & Returns</button>
+                    <button class="option-button" onclick="selectOption('billing')">4. Billing Enquiries</button>
+                </div>
+            `;
+            currentOption = null;
+        }
+    </script>
+</body>
+</html>
+
